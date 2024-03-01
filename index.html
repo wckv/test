@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>資料查詢系統</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            var input = document.getElementById('input');
+            var result = document.getElementById('result');
+            var database = {};
+            var okButton = document.getElementById('OK');
+            var clearButton = document.getElementById('Clear');
+            var selector = document.getElementById('selector')
+            
+            selector.addEventListener('change', (event) => {
+                var selected = event.target.value;
+                fetch(selected)
+                    .then(response => response.json())
+                    .then(data => {
+                        database = data;
+                        result.textContent = '資料庫已更新';
+                    })
+                    .catch(error => result.textContent = '資料庫錯誤');
+                });
+
+            function ok(){
+                if (Object.keys(database).length === 0){
+                    result.textContent = '尚未載入資料庫';
+                    return;
+                }
+                var query = input.value;
+                if (database.hasOwnProperty(query)){
+                    result.textContent = database[query];
+                } else {
+                    result.textContent = '找不到結果';
+                }};
+            function clear(){
+                result.textContent = '';
+                input.value = '';
+            };
+
+            okButton.addEventListener('click', ok);
+            clearButton.addEventListener('click', clear);
+            input.addEventListener('keyup',(event)=>{
+                if (event.key === 'Enter'){ok();}
+                else if (event.key === 'Escape'){clear();}
+            });
+        });
+    </script>
+</head>
+<body>
+    <p><h2>資料查詢</h2></p>
+    <p><select style="width: auto; min-width: 100px;" id="selector">
+        <option selected>請選擇查詢範圍</option>
+        <option value="1.json">1</option>
+        <option value="2.json">2</option>
+        <option value="3.json">3</option>
+    </select></p>
+    <input type="text" id="input">
+    <button id="OK">OK</button> <button id="Clear">Clear</button>
+    <p id="result"> </p>
+</body>
+</html>
