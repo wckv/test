@@ -14,7 +14,7 @@
             var selector = document.getElementById('selector')
             
             selector.addEventListener('change', (event) => {
-                var selected = event.target.value;
+                selected = event.target.value;
                 fetch(selected)
                     .then(response => response.json())
                     .then(data => {
@@ -29,12 +29,22 @@
                     result.textContent = '尚未載入資料庫';
                     return;
                 }
-                var query = input.value;
+                var query = input.value.toUpperCase();
                 if (database.hasOwnProperty(query)){
-                    result.textContent = database[query];
+                    let ans = database[query];
+                    if (selected === "NY_temp.json"){
+                        let nm = ans[0] in [4, 5, 7, 8] ? '五' : '二';
+                        if (ans[0] === 't'){
+                            ans = `${query}位於${ans[1]}`;
+                        } else {
+                            ans = `${query}位於第${ans[0]}區口服${nm}層架的${ans[1]}`;
+                        }
+                    }
+                result.textContent = ans;
                 } else {
-                    result.textContent = '找不到結果';
+                    result.textContent = `找不到 ${query} 的位置`;
                 }};
+                
             function clear(){
                 result.textContent = '';
                 input.value = '';
@@ -53,6 +63,7 @@
     <p><h2>資料查詢</h2></p>
     <p><select style="width: auto; min-width: 100px;" id="selector">
         <option selected>請選擇查詢範圍</option>
+        <option value="NY_temp.json">洗縫課口服暫置區</option>
         <option value="1.json">1</option>
         <option value="2.json">2</option>
         <option value="3.json">3</option>
